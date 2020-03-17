@@ -57,54 +57,47 @@ def ml_loop():
             if ball_y>100: #below the bricks
                 if ball_x==0: #ball touches the left wall
                     if ball_y>position[1]:  #next position is lower
-                        if position[1]+6<200: 
+                        if position[1]+7<200: 
                             placement=position[1]
                             bounce=True
                         else:
                             placement=370-position[1]
                             bounce=True
+                    else:
+                        bounce=False
                 elif ball_x==195: #ball touches the right wall
                     if ball_y>position[1]:  #next position is lower
-                        if position[1]+6<200: 
+                        if position[1]+7<200: 
                             placement=200-position[1]
                             bounce=True
                         else:
                             placement=position[1]-210
                             bounce=True
+                    else:
+                        bounce=False
                 else:
                     pass
+           
                 position=scene_info.ball #update position of ball every frame
-                if bounce:
+                if bounce: #ball touches the wall and make platform to the placement
                     if platform_x<placement:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
+                        if ball_y==395: #catch the ball
+                            bounce=False
                     elif platform_x>placement:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
+                        if ball_y==395: #catch the ball
+                            bounce=False
                     else:
                         comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-                        bounce=False
-            """
-            if ball_y<300:
-                if ball_x==0 or ball_x==195:
-                    print(ball_y)
-                if platform_x<75:
-                    comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-                elif platform_x>75:
-                    comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-                else:
-                    comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-            else:
-                if ball_x==0 or ball_x==195:
-                    print(ball_y)     
-                if platform_x+20>ball_x:
-                    if platform_x<50:
-                        comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-                    else:       
-                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-                elif platform_x<ball_x:
-                    if platform_x>135:
-                        comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-                    else:       
+                        if ball_y==395: #catch the ball
+                            bounce=False
+                else : #make platform to the center
+                    if platform_x<75:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-                else:
-                    comm.send_instruction(scene_info.frame, PlatformAction.NONE)"""
+                    elif platform_x>75:
+                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
+                    else:
+                        comm.send_instruction(scene_info.frame, PlatformAction.NONE) 
+                
             
