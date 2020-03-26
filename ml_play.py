@@ -25,6 +25,7 @@ def ml_loop():
     position=[0,0]
     placement=75 #point of fall
     bounce=False
+    next_frame=False
     # 2. Inform the game process that ml process is ready before start the loop.
     comm.ml_ready()
 
@@ -34,71 +35,56 @@ def ml_loop():
         scene_info = comm.get_scene_info()
         ball_x=scene_info.ball[0]
         ball_y=scene_info.ball[1]
-        platform_x=scene_info.platform[0]
+        platform_x=scene_info.platform[0] 
+        catch=False
         # 3.2. If the game is over or passed, the game process will reset
         #      the scene and wait for ml process doing resetting job.
         if scene_info.status == GameStatus.GAME_OVER or \
             scene_info.status == GameStatus.GAME_PASS:
             # Do some stuff if needed
             ball_served = False
-
+            
             # 3.2.1. Inform the game process that ml process is ready
             comm.ml_ready()
             continue
 
         # 3.3. Put the code here to handle the scene information
-
+        if ball_y<=100 or ball_y-position[1]<0:
+            next_frame=False
         # 3.4. Send the instruction for this frame to the game process
         if not ball_served:
             comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_LEFT)
             ball_served = True  
+        else:
+            if ball_y>position[1] and next_frame and catch==False:  #next position is lower
+                vector_x=ball_x-position[0]
+                vector_y=ball_y-position[1]
+                next_frame=False
+                t=float((395-ball_y)/vector_y)
+                placement=vector_x*t+ball_x
+                while placement<0 or placement>195:
+                    if placement<0:
+                        placement=-placement
+                    else:
+                        placement=390-placement
+                placement=placement-20
 
-        else: 
             if ball_y>100: #below the bricks
                 if ball_x==0: #ball touches the left wall
-                    if ball_y>position[1]:  #next position is lower
-                        if position[1]+7<200: 
-                            placement=position[1]
-                            bounce=True
-                        else:
-                            placement=370-position[1]
-                            bounce=True
-                    else:
-                        bounce=False
+                    next_frame = True
                 elif ball_x==195: #ball touches the right wall
-                    if ball_y>position[1]:  #next position is lower
-                        if position[1]+7<200: 
-                            placement=200-position[1]
-                            bounce=True
-                        else:
-                            placement=position[1]-210
-                            bounce=True
-                    else:
-                        bounce=False
-                else:
-                    pass
-           
+                    next_frame = True
+
+
                 position=scene_info.ball #update position of ball every frame
-                if bounce: #ball touches the wall and make platform to the placement
-                    if platform_x<placement:
-                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-                        if ball_y==395: #catch the ball
-                            bounce=False
-                    elif platform_x>placement:
-                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-                        if ball_y==395: #catch the ball
-                            bounce=False
-                    else:
-                        comm.send_instruction(scene_info.frame, PlatformAction.NONE)
-                        if ball_y==395: #catch the ball
-                            bounce=False
-                else : #make platform to the center
-                    if platform_x<75:
-                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-                    elif platform_x>75:
-                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-                    else:
-                        comm.send_instruction(scene_info.frame, PlatformAction.NONE) 
-            
+                if platform_x<placement:
+                    comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
+                    #print("move right")
+                elif platform_x>placement:
+                    comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
+                    #print("move left")
+                else:
+                    comm.send_instruction(scene_info.frame, PlatformAction.NONE)
+                    #print("move none")
                 
             
