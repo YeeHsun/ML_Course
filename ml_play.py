@@ -54,6 +54,7 @@ def ml_loop():
             ball_served = True  
 
         else:
+            comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)  
             """if ball_y>100: #below the bricks
                 if ball_x==0: #ball touches the left wall
                     if ball_y>position[1]:  #next position is lower
@@ -100,5 +101,5 @@ def ml_loop():
                     else:
                         comm.send_instruction(scene_info.frame, PlatformAction.NONE) """
             
-                comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)  
+                
             
