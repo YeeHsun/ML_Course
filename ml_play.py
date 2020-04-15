@@ -53,7 +53,7 @@ def ml_loop():
             next_frame=False
         # 3.4. Send the instruction for this frame to the game process
         if not ball_served:
-            comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_LEFT)
+            comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_RIGHT)
             ball_served = True  
         else:
             if ball_y>position[1] and next_frame and catch==False:  #next position is lower
