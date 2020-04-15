@@ -59,7 +59,7 @@ def ml_loop():
                 fall_time=(400-scene_info.ball[1])/vector[1]
                 placement=fall_time*vector[0]+scene_info.ball[0]
             else: #ball is moving upward
-                placement=75+20 #platform moves to center
+                placement=100 #platform moves to center
 
             while placement>195 or placement<0:
                 if placement>195:
