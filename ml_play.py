@@ -58,7 +58,7 @@ def ml_loop():
                 placement=fall_time*vector[0]+scene_info.ball[0]
                 placement=int(placement/5)*5 #to make placement can be divided by 5
             else: #ball is moving upward
-                placement=75+20 #platform moves to center
+                placement=75+15 #platform moves to center
 
             while placement>195 or placement<0: #ball will bounce on wall
                 if placement>195:
@@ -68,9 +68,9 @@ def ml_loop():
 
             
             #temp=random.randint(1,5) #prevent forever loop
-            if platform_x<placement-20:
+            if platform_x<placement-15:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-            elif platform_x>placement-20:
+            elif platform_x>placement-15:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
             else:
                 comm.send_instruction(scene_info.frame, PlatformAction.NONE)
