@@ -49,7 +49,7 @@ def ml_loop():
         # 3.3. Put the code here to handle the scene information
         # 3.4. Send the instruction for this frame to the game process
         if not ball_served:
-            comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_LEFT)
+            comm.send_instruction(scene_info.frame, PlatformAction.SERVE_TO_RIGHT)
             ball_served = True  
         else:
             if scene_info.ball[1]-ball_y>0: #ball is moving downward
