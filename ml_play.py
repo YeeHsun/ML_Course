@@ -53,13 +53,13 @@ def ml_loop():
             ball_served = True  
         else:
             #if ball_x==0 or ball_x==195: #ball touches the wall
-            if ball_y>100: #ball is below bricks
-                if scene_info.ball[1]-ball_y>0: #ball is moving downward
-                    vector=[(scene_info.ball[0]-ball_x),(scene_info.ball[1]-ball_y)]
-                    fall_time=(400-scene_info.ball[1])/vector[1]
-                    placement=fall_time*vector[0]+scene_info.ball[0]
-                else: #ball is moving upward
-                    placement=100 #platform moves to center
+            #if ball_y>100: #ball is below bricks
+            if scene_info.ball[1]-ball_y>0: #ball is moving downward
+                vector=[(scene_info.ball[0]-ball_x),(scene_info.ball[1]-ball_y)]
+                fall_time=(400-scene_info.ball[1])/vector[1]
+                placement=fall_time*vector[0]+scene_info.ball[0]
+            else: #ball is moving upward
+                placement=100 #platform moves to center
 
             while placement>195 or placement<0:
                 if placement>195:
