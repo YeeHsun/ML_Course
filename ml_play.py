@@ -69,9 +69,9 @@ def ml_loop():
 
             
             #temp=random.randint(1,5) #prevent forever loop
-            if platform_x<placement-15:
+            if platform_x<placement-17:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-            elif platform_x>placement-15:
+            elif platform_x>placement-17:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
             else:
                 comm.send_instruction(scene_info.frame, PlatformAction.NONE)
