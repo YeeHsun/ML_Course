@@ -28,13 +28,13 @@ def ml_loop(side: str):
             if scene_info["platform_1P"][0]>pred-20:return 2
             elif scene_info["platform_1P"][0]<pred-20:return 1
             else:
-                if scene_info["ball"][1]>390: #slicing
+                '''if scene_info["ball"][1]>390: #slicing
                     if scene_info["ball_speed"][0]>0:
                         return 1
                     else:
                         return 2
-                else:
-                    return 0
+                else:'''
+                return 0
                     
         else :
             if scene_info["platform_2P"][0]>pred-20:return 2
