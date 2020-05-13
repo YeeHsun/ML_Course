@@ -24,7 +24,7 @@ def ml_loop(side: str):
     # === Here is the execution order of the loop === #
     # 1. Put the initialization code here
     ball_served = False
-    filename = path.join(path.dirname(__file__),'clf_KNN_BallAndDirection.pickle')
+    filename = path.join(path.dirname(__file__),'model.pickle')
     with open(filename, 'rb') as file:
         clf = pickle.load(file)
     '''filename = path.join(path.dirname(__file__), 'save', 'clf_KMeans_BallAndDirection.pickle')
@@ -84,15 +84,29 @@ def ml_loop(side: str):
     while True:
         # 3.1. Receive the scene information sent from the game process
         scene_info = comm.recv_from_game()
+        if scene_info["ball_speed"][1] > 0 :
+            if scene_info["ball_speed"][0] > 0:
+                direction = 0
+            else :
+                direction = 1
+        else :
+            if scene_info["ball_speed"][0] > 0:
+                direction = 2
+            else:
+                direction = 3
         feature = []
         feature.append(scene_info["ball"][0])
         feature.append(scene_info["ball"][1])
+        feature.append(direction)
+        feature.append(scene_info["blocker"][0])
+        feature.append(scene_info["ball_speed"][0])
+        feature.append(scene_info["ball_speed"][1])
         #feature.append(scene_info["platform_1P"][0])
         #feature.append(get_direction(feature[0],feature[1],s[0],s[1]))
         feature = np.array(feature)
         #feature = feature.reshape((-1,4))
-        feature = feature.reshape((-1,2))
-
+        feature = feature.reshape((-1,6))
+        
 
 
         # 3.2. If either of two sides wins the game, do the updating or
