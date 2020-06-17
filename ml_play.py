@@ -116,17 +116,17 @@ class MLPlay:
                             self.change_lane = 1
                         self.command = 2'''
                 if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
-                    return ["NONE"]        
+                    return ["BRAKE"]        
                 elif (0 in grid) and (3 in grid):
-                    return ["NONE"]
+                    return ["BRAKE"] 
                 elif (1 in grid) and (2 in grid):
-                    return ["NONE"]
+                    return ["BRAKE"] 
                 elif (1 in grid) and (3 in grid):
-                    return ["NONE"]
+                    return ["BRAKE"] 
                 elif (0 in grid) and (2 in grid):
-                    return ["NONE"]
+                    return ["BRAKE"] 
                 elif (0 in grid) and (1 in grid) and (6 in grid):
-                    return ["NONE"]
+                    return ["BRAKE"] 
                 elif (1 in grid) :
                     return goto(destination=self.init_lane-25)
                 elif (3 in grid):
