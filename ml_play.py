@@ -63,11 +63,11 @@ class MLPlay:
                 if self.command == 1:
                     if self.car_pos[0]==self.init_lane-46:
                         self.change_lane = 0
-                    return ["MOVE_RIGHT"]
+                    return ["SPEED","MOVE_RIGHT"]
                 elif self.command == 2:
                     if self.car_pos[0]==self.init_lane-24:
                         self.change_lane = 0
-                    return ["MOVE_LEFT"]
+                    return ["SPEED","MOVE_LEFT"]
                 elif self.command == 3:
                     self.change_lane = 0
                     return ["BRAKE"]
