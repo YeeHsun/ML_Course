@@ -49,34 +49,37 @@ class MLPlay:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x > -80 and x < -20 :
-                        if y > 80 and y<250:
+                        if y > 80 and y<300:
                             grid.add(2)
-                            if y > 80 and y < 120:
+                            if y > 80 and y < 130:
                                 grid.add(3)
                         elif y < -80 and y > -200:
                             grid.add(9)
                         elif y < 80 and y > -80:
                             grid.add(6)
                     if x < 80 and x > 20:
-                        if y>80 and y<250:
+                        if y>80 and y<300:
                             grid.add(0)
-                            if y > 80 and y < 120:
+                            if y > 80 and y < 130:
                                 grid.add(1)
                         elif y < -80 and y > -200:
                             grid.add(7)
                         elif y < 80 and y > -80:
                             grid.add(4)
-            #if self.change_lane == 0:
-            return move(grid= grid, speed_ahead = speed_ahead)
-            """else:
+            if self.change_lane == 0:
+                return move(grid= grid, speed_ahead = speed_ahead)
+            else:
                 if self.command == 1:
-                    if self.car_pos[0]==self.init_lane-35:
+                    if self.car_pos[0]==self.init_lane-46:
                         self.change_lane = 0
-                    return ["SPEED","MOVE_RIGHT"]
+                    return ["MOVE_RIGHT"]
                 elif self.command == 2:
-                    if self.car_pos[0]==self.init_lane-35:
+                    if self.car_pos[0]==self.init_lane-24:
                         self.change_lane = 0
-                    return ["SPEED","MOVE_LEFT"]"""
+                    return ["MOVE_LEFT"]
+                elif self.command == 3:
+                    self.change_lane = 0
+                    return ["BRAKE"]
             
                 
                     
@@ -84,8 +87,9 @@ class MLPlay:
             
         def move(grid, speed_ahead): 
             if self.player_no == 0 :
-                #print (self.car_pos[0])
+                print (self.car_pos[0])
                 print(grid)
+                print (self.init_lane)
                 '''print ("car lane:")
                 print (self.car_lane)
                 print ("car pos:")
@@ -104,29 +108,46 @@ class MLPlay:
                     self.done = 1
                 return goto(destination=self.init_lane-35)
             else:
-                '''if (0 in grid) and (2 in grid):
-                    if (1 not in grid) and (4 not in grid):
-                        if self.change_lane == 0:
-                            self.init_lane-=70
-                            self.change_lane = 1
-                        self.command = 1    
-                    elif (3 not in grid) and (6 not in grid):
-                        if self.change_lane == 0:
-                            self.init_lane+=70
-                            self.change_lane = 1
-                        self.command = 2'''
-                if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
-                    return ["BRAKE"]        
-                elif (0 in grid) and (3 in grid):
-                    return ["BRAKE"] 
-                elif (1 in grid) and (2 in grid):
-                    return ["BRAKE"] 
-                elif (1 in grid) and (3 in grid):
-                    return ["BRAKE"] 
-                elif (0 in grid) and (2 in grid):
-                    return ["BRAKE"] 
-                elif (0 in grid) and (1 in grid) and (6 in grid):
-                    return ["BRAKE"] 
+                if (0 in grid) and (2 in grid):
+                    if self.car_lane == 0 or self.car_lane == 1 or self.car_lane ==2 or self.car_lane ==3:
+                        if (3 not in grid) and (6 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane+=70
+                                self.change_lane = 1
+                            self.command = 1
+                        elif (1 not in grid) and (4 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane-=70
+                                self.change_lane = 1
+                            self.command = 2
+                        else:
+                            self.command = 3   
+                    else:
+                        if (1 not in grid) and (4 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane-=70
+                                self.change_lane = 1
+                            self.command = 2     
+                        elif (3 not in grid) and (6 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane+=70
+                                self.change_lane = 1
+                            self.command = 1 
+                        else:
+                            self.command = 3
+                #if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
+               #     return ["NONE"]        
+                #elif (0 in grid) and (3 in grid):
+               #     return ["NONE"]
+                #elif (1 in grid) and (2 in grid):
+                #    return ["NONE"]
+                #elif (1 in grid) and (3 in grid):
+                 #   return ["BREAK"]
+                #elif (0 in grid) and (2 in grid):
+                #    return ["NONE"]
+                #elif (0 in grid) and (1 in grid) and (6 in grid):
+                    #return ["NONE"]
+         
                 elif (1 in grid) :
                     return goto(destination=self.init_lane-25)
                 elif (3 in grid):
