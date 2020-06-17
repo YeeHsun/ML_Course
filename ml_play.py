@@ -13,6 +13,10 @@ class MLPlay:
         self.car_pos = (0,0)                        # pos initial
         self.car_lane = self.car_pos[0] // 70       # lanes 0 ~ 8
         self.lanes = [35, 105, 175, 245, 315, 385, 455, 525, 595]  # lanes center
+        self.done = 0  #done = 0 when finishing changing car lane
+        self.command = 0  #0:NONE 1:SPEED 2:SPEED-RIGHT 3:SPEED-LEFT 4:RIGHT 5:LEFT 6:BRAKE 7:BRAKE-RIGHT 8:BRAKE-LEFT
+        self.target_lane_left = 0
+        self.target_lane_right = 0
         pass
 
     def update(self, scene_info):
@@ -26,6 +30,7 @@ class MLPlay:
         |  7 |  8 |  9 |
         |    |    |    |       
         """
+        
         def check_grid():
             grid = set()
             speed_ahead = 100
@@ -45,7 +50,7 @@ class MLPlay:
                     if x <= 40 and x >= -40 :      
                         if y > 0 and y < 300:
                             grid.add(2)
-                            if y < 200:
+                            if y < 250:
                                 speed_ahead = car["velocity"]
                                 grid.add(5) 
                         elif y < 0 and y > -200:
@@ -64,11 +69,59 @@ class MLPlay:
                             grid.add(7)
                         elif y < 80 and y > -80:
                             grid.add(4)
-            return move(grid= grid, speed_ahead = speed_ahead)
+            if self.done == 0:
+                return move(grid= grid, speed_ahead = speed_ahead)
+            else:
+                if self.command == 0:
+                    return ["NONE"]
+                elif self.command == 1:
+                    self.done = 0
+                    return ["SPEED"]
+                    
+                elif self.command == 2:
+                    if self.car_pos[0]==self.lanes[self.target_lane_right]:
+                        self.done = 0
+                    return ["SPEED","MOVE_RIGHT"]
+                elif self.command == 3:
+                    if self.car_pos[0]==self.lanes[self.target_lane_left]:
+                        self.done = 0
+                    return ["SPEED","MOVE_LEFT"]
+                elif self.command == 4:
+                    if self.car_pos[0]==self.lanes[self.target_lane_right]:
+                        self.done = 0
+                    return ["MOVE_RIGHT"]
+                elif self.command == 5:
+                    if self.car_pos[0]==self.lanes[self.target_lane_left]:
+                        self.done = 0
+                    return ["MOVE_LEFT"]
+                elif self.command == 6:
+                    self.done = 0
+                    return ["BRAKE"]
+                    
+                elif self.command == 7:
+                    if self.car_pos[0]==self.lanes[self.target_lane_right]:
+                        self.done = 0
+                    return ["BRAKE","MOVE_RIGHT"]
+                elif self.command == 8:
+                    if self.car_pos[0]==self.lanes[self.target_lane_left]:
+                        self.done = 0
+                    return ["BRAKE","MOVE_LEFT"]
+                
+                    
+                
             
         def move(grid, speed_ahead): 
             if self.player_no == 0:
                 print(grid)
+                '''print ("car lane:")
+                print (self.car_lane)
+                print ("car pos:")
+                print (self.car_pos[0])
+                print ("left")
+                print(self.lanes[self.target_lane_left])
+                print ("right")
+                print(self.lanes[self.target_lane_right])'''
+            #print (self.done)
             if len(grid) == 0:
                 return ["SPEED"]
             else:
@@ -76,53 +129,108 @@ class MLPlay:
                     # Back to lane center
                     if self.car_pos[0] > self.lanes[self.car_lane]:
                         return ["SPEED", "MOVE_LEFT"]
-                    elif self.car_pos[0 ] < self.lanes[self.car_lane]:
+                    elif self.car_pos[0] < self.lanes[self.car_lane]:
                         return ["SPEED", "MOVE_RIGHT"]
                     else :return ["SPEED"]
                 else:
-                    if self.car_lane==0 or self.car_lane==1 or self.car_lane==2 or self.car_lane==3 or self.car_lane==4:
-                        if (5 in grid): # NEED to BRAKE
-                            if (6 not in grid) and (9 not in grid): # turn right
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_RIGHT"]
-                                else:
-                                    return ["BRAKE", "MOVE_RIGHT"]
-                            elif (4 not in grid) and (7 not in grid): # turn left 
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_LEFT"]
-                                else:
-                                    return ["BRAKE", "MOVE_LEFT"]
-                            else : 
-                                if self.car_vel < speed_ahead:  # BRAKE
-                                    return ["SPEED"]
-                                else:
-                                    return ["BRAKE"]
-                        if (self.car_pos[0] < 60 ):
-                            return ["SPEED", "MOVE_RIGHT"]                        
+                    #if self.car_lane==0 or self.car_lane==1 or self.car_lane==2 or self.car_lane==3 or self.car_lane==4:
+                    if (5 in grid): # NEED to BRAKE
+                        if self.done == 0:
+                            if self.car_lane+1<=8:
+                                self.target_lane_right = self.car_lane+1  #right lane of curent lane
+                            else:
+                                self.target_lane_right = self.car_lane
+                            if self.car_lane-1>=0:
+                                self.target_lane_left = self.car_lane-1   #left lane of curent lane
+                            else:
+                                self.target_lane_left = self.car_lane
+                            
+                        self.done = 1                        #haven't changed lane
+                        '''print (target_lane_left)
+                        print (target_lane_right)'''
                         if (3 not in grid) and (6 not in grid) and (9 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid) and (7 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]                        
-                        if (3 not in grid) and (6 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]                         
-                        if (6 not in grid) and (9 not in grid): # turn right
-                            return ["MOVE_RIGHT"]
-                        if (4 not in grid) and (7 not in grid): # turn left 
-                            return ["MOVE_LEFT"]   
-                    else:
+                            #if self.car_vel < speed_ahead:                                    
+                            self.command = 2 #speed-right
+                            print ("speed right")
+                            '''else:
+                                self.command = 4''' #brake-right
+                                
+                        elif (1 not in grid) and (4 not in grid) and (7 not in grid): # turn right
+                            #if self.car_vel < speed_ahead:                                    
+                            self.command = 3 #speed-right
+                            print ("speed left")   
+                            '''else:
+                                self.command = 5 #brake-right'''
+                                
+                        elif (6 not in grid) and (9 not in grid): # turn right
+                            #if self.car_vel < speed_ahead:                                    
+                            self.command = 2 #speed-right
+                            print ("speed right")    
+                            '''else:
+                                self.command = 4 #brake-right'''
+                                
+                        elif (4 not in grid) and (7 not in grid): # turn left 
+                            #if self.car_vel < speed_ahead:
+                            self.command = 3 #speed-left
+                            print ("speed left")    
+                            '''else:
+                                self.command = 5 #brake-left'''
+                                
+                        else : 
+                            if self.car_vel < speed_ahead:  # BRAKE
+                                self.command = 1
+                                
+                            else:
+                                print ("brake")
+                                self.command = 6
+                                
+                    if (self.car_pos[0] < 60 ):
+                        self.command = 2 #speed-left
+                        #return ["SPEED", "MOVE_RIGHT"]                        
+                    if (3 not in grid) and (6 not in grid) and (9 not in grid): # turn right
+                        self.command = 2 #speed-left
+                        #return ["SPEED", "MOVE_RIGHT"]
+                    if (1 not in grid) and (4 not in grid) and (7 not in grid): # turn left 
+                        self.command = 3 #speed-left
+                        #return ["SPEED", "MOVE_LEFT"]                        
+                    if (3 not in grid) and (6 not in grid): # turn right
+                        self.command = 2 #speed-left
+                        #return ["SPEED", "MOVE_RIGHT"]
+                    if (1 not in grid) and (4 not in grid): # turn left 
+                        self.command = 3 #speed-left
+                        #return ["SPEED", "MOVE_LEFT"]                         
+                    if (6 not in grid) and (9 not in grid): # turn right
+                        self.command = 4 #speed-left
+                        #return ["MOVE_RIGHT"]
+                    if (4 not in grid) and (7 not in grid): # turn left 
+                        self.command = 5 #speed-left
+                        #return ["MOVE_LEFT"] 
+                    '''else:
                         if (5 in grid): # NEED to BRAKE
+                            target_lane_right = self.car_lane+1
+                            target_lane_left = self.car_lane-1
+                            self.done = 1
+                            print (target_lane_left)
+                            print (target_lane_right)
+                            
                             if (4 not in grid) and (7 not in grid): # turn left 
                                 if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_LEFT"]
+                                    while self.car_pos[0]>target_lane_left:
+                                        return ["SPEED", "MOVE_LEFT"]
+                                    self.done = 0
                                 else:
-                                    return ["BRAKE", "MOVE_LEFT"]
+                                    while self.car_pos[0]>target_lane_left:
+                                        return ["BRAKE", "MOVE_LEFT"]
+                                    self.done = 0
                             elif (6 not in grid) and (9 not in grid): # turn right
                                 if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_RIGHT"]
+                                    while self.car_pos[0]<target_lane_right:
+                                        return ["SPEED", "MOVE_RIGHT"]
+                                    self.done = 0
                                 else:
-                                    return ["BRAKE", "MOVE_RIGHT"]
+                                    while self.car_pos[0]<target_lane_right:
+                                        return ["BRAKE", "MOVE_RIGHT"]
+                                    self.done = 0
                             else : 
                                 if self.car_vel < speed_ahead:  # BRAKE
                                     return ["SPEED"]
@@ -141,7 +249,7 @@ class MLPlay:
                         if (4 not in grid) and (7 not in grid): # turn left 
                             return ["MOVE_LEFT"]    
                         if (6 not in grid) and (9 not in grid): # turn right
-                            return ["MOVE_RIGHT"]
+                            return ["MOVE_RIGHT"]'''
                                 
                     
         if len(scene_info[self.player]) != 0:
