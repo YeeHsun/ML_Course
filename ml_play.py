@@ -91,7 +91,9 @@ class MLPlay:
                 else:
                     return ["SPEED"]
             else:
-                if (1 in grid) :
+                if (1 in grid) and (3 in grid):
+                    return ["BRAKE"]
+                elif (1 in grid) :
                     if self.car_pos[0]>self.init_lane-25:
                         return ["SPEED","MOVE_LEFT"]
                     elif self.car_pos[0]<self.init_lane-25:
@@ -105,8 +107,7 @@ class MLPlay:
                         return ["SPEED","MOVE_RIGHT"]
                     else:
                         return ["SPEED"]
-                elif (1 in grid) and (3 in grid):
-                        return ["NONE"]
+                
                 else:
                     return ["SPEED"]
                     
