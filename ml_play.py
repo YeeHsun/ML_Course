@@ -13,27 +13,24 @@ class MLPlay:
         self.car_pos = (0,0)                        # pos initial
         self.car_lane = self.car_pos[0] // 70       # lanes 0 ~ 8
         self.lanes = [35, 105, 175, 245, 315, 385, 455, 525, 595]  # lanes center
+        self.done = 0  
+        self.init_lane = 1
+        self.change_lane = 0
+        self.command = 0
         pass
 
     def update(self, scene_info):
-        """
-        9 grid relative position
-        |    |    |    |
-        |  1 |  2 |  3 |
-        |    |  5 |    |
-        |  4 |  c |  6 |
-        |    |    |    |
-        |  7 |  8 |  9 |
-        |    |    |    |       
-        """
+   
+        
         def check_grid():
             grid = set()
             speed_ahead = 100
-            if self.car_pos[0] <= 65: # left bound//65
+            
+            if self.car_pos[0] <= 35: # left bound//65
                 grid.add(1)
                 grid.add(4)
                 grid.add(7)
-            elif self.car_pos[0] >= 565: # right bound//565
+            elif self.car_pos[0] >= 595: # right bound//565
                 grid.add(3)
                 grid.add(6)
                 grid.add(9)
@@ -42,108 +39,122 @@ class MLPlay:
                 if car["id"] != self.player_no:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
-                    if x <= 40 and x >= -40 :      
-                        if y > 0 and y < 300:
+                    if x > -80 and x < -20 :
+                        if y > 80 and y<350:
                             grid.add(2)
-                            if y < 200:
-                                speed_ahead = car["velocity"]
-                                grid.add(5) 
-                        elif y < 0 and y > -200:
-                            grid.add(8)
-                    if x > -100 and x < -40 :
-                        if y > 80 and y < 250:
-                            grid.add(3)
+                            if y > 80 and y < 140:
+                                grid.add(3)
                         elif y < -80 and y > -200:
                             grid.add(9)
                         elif y < 80 and y > -80:
                             grid.add(6)
-                    if x < 100 and x > 40:
-                        if y > 80 and y < 250:
-                            grid.add(1)
+                    if x < 80 and x > 20:
+                        if y>80 and y<350:
+                            grid.add(0)
+                            if y > 80 and y < 140:
+                                grid.add(1)
                         elif y < -80 and y > -200:
                             grid.add(7)
                         elif y < 80 and y > -80:
                             grid.add(4)
-            return move(grid= grid, speed_ahead = speed_ahead)
+            if self.change_lane == 0:
+                return move(grid= grid, speed_ahead = speed_ahead)
+            else:
+                if self.command == 1:
+                    if self.car_pos[0]==self.init_lane-46:
+                        self.change_lane = 0
+                    return ["SPEED","MOVE_RIGHT"]
+                elif self.command == 2:
+                    if self.car_pos[0]==self.init_lane-24:
+                        self.change_lane = 0
+                    return ["SPEED","MOVE_LEFT"]
+                elif self.command == 3:
+                    self.change_lane = 0
+                    return ["BRAKE"]
+            
+                
+                    
+                
             
         def move(grid, speed_ahead): 
-            if self.player_no == 0:
+            if self.player_no == 0 :
+                print (self.car_pos[0])
                 print(grid)
+                print (self.init_lane)
+                '''print ("car lane:")
+                print (self.car_lane)
+                print ("car pos:")
+                print (self.car_pos[0])
+                print ("left")
+                print(self.lanes[self.target_lane_left])
+                print ("right")
+                print(self.lanes[self.target_lane_right])
+                print (self.init_lane)
+                print (self.car_pos[0])'''
+
+            #print (self.done)
             if len(grid) == 0:
-                return ["SPEED"]
+                if self.done == 0:
+                    self.init_lane=self.lanes[self.car_lane]
+                    self.done = 1
+                return goto(destination=self.init_lane-35)
             else:
-                if (2 not in grid): # Check forward 
-                    # Back to lane center
-                    if self.car_pos[0] > self.lanes[self.car_lane]:
-                        return ["SPEED", "MOVE_LEFT"]
-                    elif self.car_pos[0 ] < self.lanes[self.car_lane]:
-                        return ["SPEED", "MOVE_RIGHT"]
-                    else :return ["SPEED"]
-                else:
-                    if self.car_lane==0 or self.car_lane==1 or self.car_lane==2 or self.car_lane==3 or self.car_lane==4:
-                        if (5 in grid): # NEED to BRAKE
-                            if (6 not in grid) and (9 not in grid): # turn right
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_RIGHT"]
-                                else:
-                                    return ["BRAKE", "MOVE_RIGHT"]
-                            elif (4 not in grid) and (7 not in grid): # turn left 
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_LEFT"]
-                                else:
-                                    return ["BRAKE", "MOVE_LEFT"]
-                            else : 
-                                if self.car_vel < speed_ahead:  # BRAKE
-                                    return ["SPEED"]
-                                else:
-                                    return ["BRAKE"]
-                        if (self.car_pos[0] < 60 ):
-                            return ["SPEED", "MOVE_RIGHT"]                        
-                        if (3 not in grid) and (6 not in grid) and (9 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid) and (7 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]                        
-                        if (3 not in grid) and (6 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]                         
-                        if (6 not in grid) and (9 not in grid): # turn right
-                            return ["MOVE_RIGHT"]
-                        if (4 not in grid) and (7 not in grid): # turn left 
-                            return ["MOVE_LEFT"]   
+                if (0 in grid) and (2 in grid):
+                    if self.car_lane == 0 or self.car_lane == 1 or self.car_lane ==2 or self.car_lane ==3:
+                        if (3 not in grid) and (6 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane+=70
+                                self.change_lane = 1
+                            self.command = 1
+                        elif (1 not in grid) and (4 not in grid) and self.car_lane!=1:
+                            if self.change_lane == 0:
+                                self.init_lane-=70
+                                self.change_lane = 1
+                            self.command = 2
+                        else:
+                            self.command = 3   
                     else:
-                        if (5 in grid): # NEED to BRAKE
-                            if (4 not in grid) and (7 not in grid): # turn left 
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_LEFT"]
-                                else:
-                                    return ["BRAKE", "MOVE_LEFT"]
-                            elif (6 not in grid) and (9 not in grid): # turn right
-                                if self.car_vel < speed_ahead:
-                                    return ["SPEED", "MOVE_RIGHT"]
-                                else:
-                                    return ["BRAKE", "MOVE_RIGHT"]
-                            else : 
-                                if self.car_vel < speed_ahead:  # BRAKE
-                                    return ["SPEED"]
-                                else:
-                                    return ["BRAKE"]
-                        if (self.car_pos[0] < 60 ):
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid) and (7 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]
-                        if (3 not in grid) and (6 not in grid) and (9 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (1 not in grid) and (4 not in grid): # turn left 
-                            return ["SPEED", "MOVE_LEFT"]
-                        if (3 not in grid) and (6 not in grid): # turn right
-                            return ["SPEED", "MOVE_RIGHT"]
-                        if (4 not in grid) and (7 not in grid): # turn left 
-                            return ["MOVE_LEFT"]    
-                        if (6 not in grid) and (9 not in grid): # turn right
-                            return ["MOVE_RIGHT"]
-                                
+                        if (1 not in grid) and (4 not in grid) and self.car_lane!=1:
+                            if self.change_lane == 0:
+                                self.init_lane-=70
+                                self.change_lane = 1
+                            self.command = 2     
+                        elif (3 not in grid) and (6 not in grid):
+                            if self.change_lane == 0:
+                                self.init_lane+=70
+                                self.change_lane = 1
+                            self.command = 1 
+                        else:
+                            self.command = 3
+                #if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
+               #     return ["NONE"]        
+                #elif (0 in grid) and (3 in grid):
+               #     return ["NONE"]
+                #elif (1 in grid) and (2 in grid):
+                #    return ["NONE"]
+                #elif (1 in grid) and (3 in grid):
+                 #   return ["BREAK"]
+                #elif (0 in grid) and (2 in grid):
+                #    return ["NONE"]
+                #elif (0 in grid) and (1 in grid) and (6 in grid):
+                    #return ["NONE"]
+         
+                elif (1 in grid) :
+                    return goto(destination=self.init_lane-25)
+                elif (3 in grid):
+                    return goto(destination=self.init_lane-45)
+                else:
+                    return ["SPEED"]
                     
+                                
+        def goto(destination):
+            if self.car_pos[0]>destination:
+                return ["SPEED","MOVE_LEFT"]
+            elif self.car_pos[0]<destination:
+                return ["SPEED","MOVE_RIGHT"]
+            else:
+                return ["SPEED"]
+
         if len(scene_info[self.player]) != 0:
             self.car_pos = scene_info[self.player]
 
