@@ -40,7 +40,7 @@ class MLPlay:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x > -80 and x < -20 :
-                        if y > 80 and y<350:
+                        if y > 80 and y<300:
                             grid.add(2)
                             if y > 80 and y < 140:
                                 grid.add(3)
@@ -49,7 +49,7 @@ class MLPlay:
                         elif y < 80 and y > -80:
                             grid.add(6)
                     if x < 80 and x > 20:
-                        if y>80 and y<350:
+                        if y>80 and y<300:
                             grid.add(0)
                             if y > 80 and y < 140:
                                 grid.add(1)
