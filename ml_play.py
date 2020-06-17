@@ -20,7 +20,16 @@ class MLPlay:
         pass
 
     def update(self, scene_info):
-   
+        """
+        9 grid relative position
+        |    |    |    |
+        |  1 |  2 |  3 |
+        |    |  5 |    |
+        |  4 |  c |  6 |
+        |    |    |    |
+        |  7 |  8 |  9 |
+        |    |    |    |       
+        """
         
         def check_grid():
             grid = set()
@@ -40,7 +49,7 @@ class MLPlay:
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
                     if x > -80 and x < -20 :
-                        if y > 80 and y<300:
+                        if y > 80 and y < 300:
                             grid.add(2)
                             if y > 80 and y < 140:
                                 grid.add(3)
@@ -49,7 +58,7 @@ class MLPlay:
                         elif y < 80 and y > -80:
                             grid.add(6)
                     if x < 80 and x > 20:
-                        if y>80 and y<300:
+                        if y > 80 and y < 300:
                             grid.add(0)
                             if y > 80 and y < 140:
                                 grid.add(1)
@@ -101,7 +110,7 @@ class MLPlay:
             else:
                 if (0 in grid) and (2 in grid):
                     if self.car_lane == 0 or self.car_lane == 1 or self.car_lane ==2 or self.car_lane ==3:
-                        if (3 not in grid) and (6 not in grid):
+                        if (3 not in grid) and (6 not in grid) and self.car_lane!=8:
                             if self.change_lane == 0:
                                 self.init_lane+=70
                                 self.change_lane = 1
@@ -119,7 +128,7 @@ class MLPlay:
                                 self.init_lane-=70
                                 self.change_lane = 1
                             self.command = 2     
-                        elif (3 not in grid) and (6 not in grid):
+                        elif (3 not in grid) and (6 not in grid) and self.car_lane!=8:
                             if self.change_lane == 0:
                                 self.init_lane+=70
                                 self.change_lane = 1
