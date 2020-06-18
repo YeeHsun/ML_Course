@@ -124,19 +124,8 @@ class MLPlay:
                             self.command = 1 
                         """else:
                             self.command = 3"""
-                #if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
-               #     return ["NONE"]        
-                #elif (0 in grid) and (3 in grid):
-               #     return ["NONE"]
-                #elif (1 in grid) and (2 in grid):
-                #    return ["NONE"]
-                #elif (1 in grid) and (3 in grid):
-                 #   return ["BREAK"]
-                #elif (0 in grid) and (2 in grid):
-                #    return ["NONE"]
-                #elif (0 in grid) and (1 in grid) and (6 in grid):
-                    #return ["NONE"]
-         
+                elif (1 not in grid) and (3 not in grid) and (4 not in grid) and (6 not in grid):
+                    return goto(destination=self.init_lane-35)
                 elif (1 in grid) :
                     return goto(destination=self.init_lane-25)
                 elif (3 in grid):
