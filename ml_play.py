@@ -20,16 +20,7 @@ class MLPlay:
         pass
 
     def update(self, scene_info):
-        """
-        9 grid relative position
-        |    |    |    |
-        |  1 |  2 |  3 |
-        |    |  5 |    |
-        |  4 |  c |  6 |
-        |    |    |    |
-        |  7 |  8 |  9 |
-        |    |    |    |       
-        """
+     
         
         def check_grid():
             grid = set()
@@ -77,9 +68,9 @@ class MLPlay:
                     if self.car_pos[0]==self.init_lane-24:
                         self.change_lane = 0
                     return ["MOVE_LEFT"]
-                elif self.command == 3:
+                """elif self.command == 3:
                     self.change_lane = 0
-                    return ["NONE"]
+                    return ["NONE"]"""
             
                 
                     
@@ -120,8 +111,8 @@ class MLPlay:
                                 self.init_lane-=70
                                 self.change_lane = 1
                             self.command = 2
-                        else:
-                            self.command = 3   
+                        """else:
+                            self.command = 3   """
                     else:
                         if (1 not in grid) and (4 not in grid) and self.car_lane!=1:
                             if self.change_lane == 0:
@@ -133,8 +124,8 @@ class MLPlay:
                                 self.init_lane+=70
                                 self.change_lane = 1
                             self.command = 1 
-                        else:
-                            self.command = 3
+                        """else:
+                            self.command = 3"""
                 #if (0 in grid) and (1 in grid) and (2 in grid) and (3 in grid):
                #     return ["NONE"]        
                 #elif (0 in grid) and (3 in grid):
