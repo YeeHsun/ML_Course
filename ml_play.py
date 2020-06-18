@@ -79,7 +79,7 @@ class MLPlay:
                     return ["MOVE_LEFT"]
                 elif self.command == 3:
                     self.change_lane = 0
-                    return ["BRAKE"]
+                    return ["NONE"]
             
                 
                     
