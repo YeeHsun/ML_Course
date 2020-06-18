@@ -19,9 +19,7 @@ class MLPlay:
         self.command = 0
         pass
 
-    def update(self, scene_info):
-     
-        
+    def update(self, scene_info):  
         def check_grid():
             grid = set()
             speed_ahead = 100
@@ -78,19 +76,19 @@ class MLPlay:
             
         def move(grid, speed_ahead): 
             if self.player_no == 0 :
-                print (self.car_pos[0])
-                print(grid)
-                print (self.init_lane)
-                '''print ("car lane:")
+                #print (self.car_pos[0])
+                #print(grid)
+                #print (self.init_lane)
+                #print ("car lane:")
                 print (self.car_lane)
-                print ("car pos:")
+                """print ("car pos:")
                 print (self.car_pos[0])
                 print ("left")
                 print(self.lanes[self.target_lane_left])
                 print ("right")
                 print(self.lanes[self.target_lane_right])
                 print (self.init_lane)
-                print (self.car_pos[0])'''
+                print (self.car_pos[0])"""
 
             #print (self.done)
             if len(grid) == 0:
@@ -106,7 +104,7 @@ class MLPlay:
                                 self.init_lane+=70
                                 self.change_lane = 1
                             self.command = 1
-                        elif (1 not in grid) and (4 not in grid) and self.car_lane!=1:
+                        elif (1 not in grid) and (4 not in grid) and self.car_lane!=1 and self.car_lane!=0:
                             if self.change_lane == 0:
                                 self.init_lane-=70
                                 self.change_lane = 1
@@ -114,7 +112,7 @@ class MLPlay:
                         """else:
                             self.command = 3   """
                     else:
-                        if (1 not in grid) and (4 not in grid) and self.car_lane!=1:
+                        if (1 not in grid) and (4 not in grid) and self.car_lane!=1 and self.car_lane!=0:
                             if self.change_lane == 0:
                                 self.init_lane-=70
                                 self.change_lane = 1
