@@ -87,7 +87,7 @@ class MLPlay:
                         self.change_lane = 0
                     return ["SPEED","MOVE_RIGHT"]
                 elif self.command == 2:
-                    if self.car_pos[0]==self.init_lane-24:
+                    if self.car_pos[0]==self.init_lane-9:
                         self.change_lane = 0
                     return ["SPEED","MOVE_LEFT"]
                 elif self.command == 3:
@@ -162,7 +162,7 @@ class MLPlay:
                 elif (1 not in car_grid) and (3 not in car_grid) and (4 not in car_grid) and (6 not in car_grid):
                     return goto(destination=self.init_lane-34)
                 elif (1 in car_grid) :
-                    return goto(destination=self.init_lane-25)
+                    return goto(destination=self.init_lane-9)
                 elif (3 in car_grid):
                     return goto(destination=self.init_lane-60)
                 
