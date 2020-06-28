@@ -27,7 +27,7 @@ class MLPlay:
                 car_grid = set()  #computer car information 
                 coin_grid = set() #coin imformation
                 position_ahead = 80000
-                
+                speed_ahead = 100
                 if self.car_pos[0] <= 35: # left bound//35
                     car_grid.add(5)
                     car_grid.add(7)
@@ -64,6 +64,7 @@ class MLPlay:
                         if x <= 20 and x >= -20 : 
                             if y > 0 and y < 200:
                                 position_ahead = y
+                                speed_ahead = car["velocity"]
                                 car_grid.add(9) 
                 #coin information
                 for coin in scene_info["coins"]:
@@ -82,17 +83,14 @@ class MLPlay:
 
 
                 if self.change_lane == 0:
-                    return move(car_grid= car_grid,coin_grid=coin_grid, position_ahead = position_ahead)
+                    return move(car_grid= car_grid,coin_grid=coin_grid, position_ahead = position_ahead , speed_ahead = speed_ahead)
                 else:
                     if self.command == 1:
                         if (self.car_pos[0]==self.init_lane-63) or (self.car_pos[0] == self.init_lane-62) or (self.car_pos[0] ==self.init_lane-61):
                             self.change_lane = 0
                             print("change right")   
                         if position_ahead<150:
-                            if scene_info["frame"]%3 == 0:
-                                return ["BRAKE","MOVE_RIGHT"]
-                            else:
-                                return ["MOVE_RIGHT"]
+                            return set_speed(target_speed = speed_ahead)
                         else:
                             return ["SPEED","MOVE_RIGHT"]
                     elif self.command == 2:
@@ -100,13 +98,11 @@ class MLPlay:
                             self.change_lane = 0
                             print("change left")
                         if position_ahead<150:
-                            if scene_info["frame"]%3 == 0:
-                                return ["BRAKE","MOVE_LEFT"]
-                            else:
-                                return ["MOVE_LEFT"]
+                            return set_speed(target_speed = speed_ahead)
                         else:
                             return ["SPEED","MOVE_LEFT"]
                     elif self.command == 3:
+                        print ("fuck")
                         self.change_lane = 0
                         return ["NONE"]
                 
@@ -114,7 +110,7 @@ class MLPlay:
                         
                     
                 
-            def move(car_grid,coin_grid,position_ahead): 
+            def move(car_grid,coin_grid,position_ahead,speed_ahead): 
                 if self.player_no == 0 :
                     #print (self.car_pos[0])
                     #print("coin_grid")
@@ -147,27 +143,55 @@ class MLPlay:
                             """if scene_info["frame"]%2 == 0:
                                 return ["BRAKE"]
                             else:"""
-                            return ["BRAKE"]
+                            return set_speed(target_speed = speed_ahead)
                         else:
                             if (9 in car_grid) and (7 in car_grid) and (8 not in car_grid) and self.init_lane<595:
-                                print("emergency right")
+                                print("emergency right1")
                                 if self.change_lane == 0:
                                     self.init_lane=abs(self.init_lane + 70)
                                     self.change_lane = 1
                                 self.command = 1 
                             if (9 in car_grid) and (8 in car_grid) and (7 not in car_grid) and self.init_lane>105:
-                                print("emergency left")
+                                print("emergency left1")
                                 if self.change_lane == 0:
                                     self.init_lane=abs(self.init_lane - 70)
                                     self.change_lane = 1
                                 self.command = 2 
+                            if (9 in car_grid) and (7 not in car_grid) and (8 not in car_grid):
+                                if self.init_lane==105:
+                                    print("emergency right2")
+                                    if self.change_lane == 0:
+                                        self.init_lane=abs(self.init_lane + 70)
+                                        self.change_lane = 1
+                                    self.command = 1
+                                elif self.init_lane==595:
+                                    print("emergency left2")
+                                    if self.change_lane == 0:
+                                        self.init_lane=abs(self.init_lane - 70)
+                                        self.change_lane = 1
+                                    self.command = 2
+                                else:
+                                    if self.car_lane == 0 or self.car_lane == 1 or self.car_lane ==2 or self.car_lane ==3: 
+                                        print("change right lane 26")
+                                        if self.change_lane == 0:
+                                            self.init_lane=abs(self.init_lane + 70)
+                                            self.change_lane = 1
+                                        self.command = 1
+                                    else:
+                                        print("change left lane 36")
+                                        if self.change_lane == 0:
+                                            self.init_lane=abs(self.init_lane - 70)
+                                            self.change_lane = 1
+                                        self.command = 2     
+                                        
+
                         
-                    if (5 not in car_grid and 7 not in car_grid and position_ahead>150):
+                    if (5 not in car_grid and 7 not in car_grid and position_ahead>160):
                         if (5 in coin_grid or 7 in coin_grid):
                             print("eat left coin")
                             return goto(destination=self.init_lane-63)
                 
-                    if (6 not in car_grid and 8 not in car_grid and position_ahead>150):
+                    if (6 not in car_grid and 8 not in car_grid and position_ahead>160):
                         if (6 in coin_grid or 8 in coin_grid):
                             print("eat right coin")
                             return goto(destination=self.init_lane-9) 
@@ -188,13 +212,13 @@ class MLPlay:
                             self.command = 1 
                     if ((1 in car_grid) and (2 in car_grid)):
                         if self.car_lane == 0 or self.car_lane == 1 or self.car_lane ==2 or self.car_lane ==3:
-                            if (6 not in car_grid) and (8 not in car_grid) and self.init_lane<595:
+                            if (4 not in car_grid) and (6 not in car_grid) and (8 not in car_grid) and self.init_lane<595:
                                 print("change right lane 2")
                                 if self.change_lane == 0:
                                     self.init_lane=abs(self.init_lane + 70)
                                     self.change_lane = 1
                                 self.command = 1
-                            elif (5 not in car_grid) and (7 not in car_grid) and self.init_lane>105:
+                            elif (3 not in car_grid) and (5 not in car_grid) and (7 not in car_grid) and self.init_lane>105:
                                 if self.change_lane == 0:
                                     print("change left lane 2")
                                     self.init_lane=abs(self.init_lane - 70)
@@ -203,13 +227,13 @@ class MLPlay:
                             else:
                                 self.command = 3
                         else:
-                            if (5 not in car_grid) and (7 not in car_grid) and self.init_lane>105:
+                            if (3 not in car_grid) and (5 not in car_grid) and (7 not in car_grid) and self.init_lane>105:
                                 print("change left lane 3")
                                 if self.change_lane == 0:
                                     self.init_lane=abs(self.init_lane - 70)
                                     self.change_lane = 1
                                 self.command = 2     
-                            elif (6 not in car_grid) and (8 not in car_grid) and self.init_lane<595:
+                            elif (4 not in car_grid) and (6 not in car_grid) and (8 not in car_grid) and self.init_lane<595:
                                 print("change right lane 3")
                                 if self.change_lane == 0:
                                     self.init_lane=abs(self.init_lane + 70)
@@ -249,6 +273,12 @@ class MLPlay:
                 else:
                     return ["SPEED"]
 
+            def set_speed(target_speed):
+                if self.car_vel>target_speed:
+                    return ["BRAKE"]
+                else:
+                    return ["SPEED"]
+
             if len(scene_info[self.player]) != 0:
                 self.car_pos = scene_info[self.player]
 
@@ -265,5 +295,6 @@ class MLPlay:
         """
         Reset the status
         """
+        global alive
         alive =True
         pass
