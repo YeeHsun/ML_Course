@@ -25,30 +25,30 @@ class MLPlay:
             coin_grid = set() #coin imformation
             position_ahead = 80000
             
-            if self.car_pos[0] <= 35: # left bound//65
+            if self.car_pos[0] <= 35: # left bound//35
                 car_grid.add(5)
                 car_grid.add(7)
 
-            elif self.car_pos[0] >= 595: # right bound//565
+            elif self.car_pos[0] >= 595: # right bound//595
                 car_grid.add(6)
                 car_grid.add(8)
 
 
             for car in scene_info["cars_info"]:
-                if car["id"] != self.player_no:
+                if car["id"] != self.player_no: #not player's car
                     x = self.car_pos[0] - car["pos"][0] # x relative position
                     y = self.car_pos[1] - car["pos"][1] # y relative position
-                    if x > -80 and x < -20 :
+                    if x > -80 and x < 0 :
                         if y > 80 and y < 300:
-                            car_grid.add(2)
+                            car_grid.add(2)  #far right front
                             if 300> y >150:
-                                car_grid.add(4)
+                                car_grid.add(4) #middle right front
                             if y < 160:
                                 car_grid.add(6)
                                 
                         elif y < 80 and y > -80:
                             car_grid.add(8)
-                    if x < 80 and x > 20:
+                    if x < 80 and x > 0:
                         if y > 80 and y < 300:
                             car_grid.add(1)
                             if 300 > y > 150:
