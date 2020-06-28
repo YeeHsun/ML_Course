@@ -32,10 +32,12 @@ class MLPlay:
                 if self.car_pos[0] <= 35: # left bound//35
                     car_grid.add(5)
                     car_grid.add(7)
+                    car_grid.add(10)
 
                 elif self.car_pos[0] >= 595: # right bound//595
                     car_grid.add(6)
                     car_grid.add(8)
+                    car_grid.add(11)
 
 
                 for car in scene_info["cars_info"]:
@@ -52,6 +54,8 @@ class MLPlay:
                                     
                             elif y < 80 and y > -80:
                                 car_grid.add(8)
+                            elif y < -80 and y > -150:
+                                car_grid.add(11)
                         if x < 80 and x > 0:
                             if y > 80 and y < 300:
                                 car_grid.add(1)
@@ -62,6 +66,8 @@ class MLPlay:
                                     
                             elif y < 80 and y > -80:
                                 car_grid.add(7)
+                            elif y < -80 and y > -150:
+                                car_grid.add(10)
                         if x <= 20 and x >= -20 : 
                             if y > 0 and y < 200:
                                 position_ahead = y
@@ -144,13 +150,13 @@ class MLPlay:
                     return goto(destination=self.init_lane-36)
                 else:
                     if position_ahead<200:
-                        if (9 in car_grid) and (8 not in car_grid) and self.init_lane<595:
+                        if (9 in car_grid) and (8 not in car_grid) and (11 not in car_grid) and self.init_lane<595:
                             print("emergency right1")
                             if self.change_lane == 0:
                                 self.init_lane=abs(self.init_lane + 70)
                                 self.change_lane = 1
                             self.command = 1 
-                        elif (9 in car_grid) and (7 not in car_grid) and self.init_lane>105:
+                        elif (9 in car_grid) and (7 not in car_grid) and (10 not in car_grid) and self.init_lane>105:
                             print("emergency left2")
                             if self.change_lane == 0:
                                 self.init_lane=abs(self.init_lane - 70)
@@ -175,7 +181,7 @@ class MLPlay:
                         if (6 in coin_grid or 8 in coin_grid):
                             print("eat right coin")
                             return goto(destination=self.init_lane-9)
-                             
+
                     if (5 in car_grid) and (6 in car_grid):
                         return set_speed(target_speed=speed_ahead)
 
