@@ -1,3 +1,4 @@
+import random
 class MLPlay:
     def __init__(self, player):
         self.player = player
@@ -143,44 +144,28 @@ class MLPlay:
                     return goto(destination=self.init_lane-36)
                 else:
                     if position_ahead<200:
+                        if (9 in car_grid) and (8 not in car_grid) and self.init_lane<595:
+                            print("emergency right1")
+                            if self.change_lane == 0:
+                                self.init_lane=abs(self.init_lane + 70)
+                                self.change_lane = 1
+                            self.command = 1 
+                        elif (9 in car_grid) and (7 not in car_grid) and self.init_lane>105:
+                            print("emergency left2")
+                            if self.change_lane == 0:
+                                self.init_lane=abs(self.init_lane - 70)
+                                self.change_lane = 1
+                            self.command = 2
                         if position_ahead<150:
                             print("BRAKE")
                             """if scene_info["frame"]%2 == 0:
                                 return ["BRAKE"]
                             else:"""
                             return set_speed(target_speed=speed_ahead)
-                        elif position_ahead>120:
-                            if (9 in car_grid) and (7 in car_grid) and (8 not in car_grid) and self.init_lane<595:
-                                print("emergency right")
-                                if self.change_lane == 0:
-                                    self.init_lane=abs(self.init_lane + 70)
-                                    self.change_lane = 1
-                                self.command = 1 
-                            if (9 in car_grid) and (8 in car_grid) and (7 not in car_grid) and self.init_lane>105:
-                                print("emergency left")
-                                if self.change_lane == 0:
-                                    self.init_lane=abs(self.init_lane - 70)
-                                    self.change_lane = 1
-                                self.command = 2
-                            if (9 in car_grid) and (7 not in car_grid) and (8 not in car_grid):
-                                if self.init_lane==105:
-                                    print("emergency right")
-                                    if self.change_lane == 0:
-                                        self.init_lane=abs(self.init_lane + 70)
-                                        self.change_lane = 1
-                                    self.command = 1 
-                                elif self.init_lane==595:
-                                    print("emergency left")
-                                    if self.change_lane == 0:
-                                        self.init_lane=abs(self.init_lane - 70)
-                                        self.change_lane = 1
-                                    self.command = 2
-                                else:
-                                    print("emergency right")
-                                    if self.change_lane == 0:
-                                        self.init_lane=abs(self.init_lane + 70)
-                                        self.change_lane = 1
-                                    self.command = 1 
+                        
+                        
+
+                             
                     if (5 not in car_grid and 7 not in car_grid and position_ahead>150):
                         if (5 in coin_grid or 7 in coin_grid):
                             print("eat left coin")
@@ -189,8 +174,11 @@ class MLPlay:
                     if (6 not in car_grid and 8 not in car_grid and position_ahead>150):
                         if (6 in coin_grid or 8 in coin_grid):
                             print("eat right coin")
-                            return goto(destination=self.init_lane-9) 
-                        
+                            return goto(destination=self.init_lane-9)
+                             
+                    if (5 in car_grid) and (6 in car_grid):
+                        return set_speed(target_speed=speed_ahead)
+
                     if ((1 in car_grid) and (4 in car_grid) and (3 not in car_grid) and (5 not in car_grid)) or ((1 in car_grid) and (6 in car_grid) and (3 not in car_grid) and (5 not in car_grid)):
                         if (5 not in car_grid) and (7 not in car_grid) and self.init_lane>105:
                             print ("change left lane 1")
@@ -289,5 +277,6 @@ class MLPlay:
         """
         Reset the status
         """
+        global alive
         alive =True
         pass
