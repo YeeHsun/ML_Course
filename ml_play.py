@@ -96,24 +96,12 @@ class MLPlay:
                         if (self.car_pos[0]==self.init_lane-63) or (self.car_pos[0] == self.init_lane-62) or (self.car_pos[0] ==self.init_lane-61):
                             self.change_lane = 0
                             print("change right")   
-                        if position_ahead<150:
-                            if scene_info["frame"]%3 == 0:
-                                return ["BRAKE","MOVE_RIGHT"]
-                            else:
-                                return ["MOVE_RIGHT"]
-                        else:
-                            return ["SPEED","MOVE_RIGHT"]
+                        return ["SPEED","MOVE_RIGHT"]
                     elif self.command == 2:
                         if (self.car_pos[0]==self.init_lane-10) or (self.car_pos[0] == self.init_lane-9) or (self.car_pos[0] == self.init_lane-11):
                             self.change_lane = 0
                             print("change left")
-                        if position_ahead<150:
-                            if scene_info["frame"]%3 == 0:
-                                return ["BRAKE","MOVE_LEFT"]
-                            else:
-                                return ["MOVE_LEFT"]
-                        else:
-                            return ["SPEED","MOVE_LEFT"]
+                        return ["SPEED","MOVE_LEFT"]
                     elif self.command == 3:
                         self.change_lane = 0
                         return ["NONE"]
