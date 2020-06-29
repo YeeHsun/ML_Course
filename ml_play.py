@@ -162,7 +162,6 @@ class MLPlay:
                         return set_speed(target_speed=speed_ahead)
                     
                     
-                    
 
                             
                 if (5 not in car_grid and 7 not in car_grid and position_ahead>150):
