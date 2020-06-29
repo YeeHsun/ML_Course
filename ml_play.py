@@ -142,13 +142,13 @@ class MLPlay:
             else:
                 if position_ahead<200:
                     
-                    if (9 in car_grid) and (4 not in car_grid) and (6 not in car_grid) and (8 not in car_grid) and (11 not in car_grid) and self.init_lane<595:
+                    if (9 in car_grid) and  (6 not in car_grid) and (8 not in car_grid) and (11 not in car_grid) and self.init_lane<595:
                         print("emergency right1")
                         if self.change_lane == 0:
                             self.init_lane=abs(self.init_lane + 70)
                             self.change_lane = 1
                         self.command = 1 
-                    elif (9 in car_grid) and (3 not in car_grid) and (5 not in car_grid) and (7 not in car_grid) and (10 not in car_grid) and self.init_lane>105:
+                    elif (9 in car_grid)  and (5 not in car_grid) and (7 not in car_grid) and (10 not in car_grid) and self.init_lane>105:
                         print("emergency left2")
                         if self.change_lane == 0:
                             self.init_lane=abs(self.init_lane - 70)
