@@ -141,12 +141,7 @@ class MLPlay:
                 return goto(destination=self.init_lane-36)
             else:
                 if position_ahead<200:
-                    if position_ahead<150:
-                        print("BRAKE")
-                        """if scene_info["frame"]%2 == 0:
-                            return ["BRAKE"]
-                        else:"""
-                        return set_speed(target_speed=speed_ahead)
+                    
                     if (9 in car_grid) and (4 not in car_grid) and (6 not in car_grid) and (8 not in car_grid) and (11 not in car_grid) and self.init_lane<595:
                         print("emergency right1")
                         if self.change_lane == 0:
@@ -159,6 +154,12 @@ class MLPlay:
                             self.init_lane=abs(self.init_lane - 70)
                             self.change_lane = 1
                         self.command = 2
+                    if position_ahead<150:
+                        print("BRAKE")
+                        """if scene_info["frame"]%2 == 0:
+                            return ["BRAKE"]
+                        else:"""
+                        return set_speed(target_speed=speed_ahead)
                     
                     
                     
